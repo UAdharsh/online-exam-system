@@ -5,7 +5,7 @@ const Student = require('../models/Student');
 const Subject = require('../models/Subject');
 const Test = require('../models/Test');
 
-// Create a new student account
+// ✅ Create a new student account
 exports.createStudent = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -17,14 +17,13 @@ exports.createStudent = async (req, res) => {
     }
 };
 
-// Validate student account
+// ✅ Validate student account
 exports.validateStudent = async (req, res) => {
     try {
         const { studentId } = req.params;
         const student = await Student.findById(studentId);
-        if (!student) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+
         student.isValidated = true;
         await student.save();
         res.status(200).json({ message: 'Student account validated successfully', student });
@@ -33,7 +32,7 @@ exports.validateStudent = async (req, res) => {
     }
 };
 
-// Create a new subject
+// ✅ Create a new subject
 exports.createSubject = async (req, res) => {
     try {
         const { name } = req.body;
@@ -45,11 +44,19 @@ exports.createSubject = async (req, res) => {
     }
 };
 
-// Create a new test
+// ✅ Create a new test
 exports.createTest = async (req, res) => {
     try {
-        const { subjectId, questions } = req.body;
-        const newTest = new Test({ subject: subjectId, questions });
+        const { subjectId, questions, duration } = req.body;
+        const teacherId = req.user._id;
+
+        const newTest = new Test({
+            subject: subjectId,
+            questions,
+            duration,
+            createdBy: teacherId
+        });
+
         await newTest.save();
         res.status(201).json({ message: 'Test created successfully', test: newTest });
     } catch (error) {
@@ -57,28 +64,34 @@ exports.createTest = async (req, res) => {
     }
 };
 
-// View results of each student
+// ✅ View results of all students (populate from results array)
 exports.viewStudentResults = async (req, res) => {
     try {
-        const results = await Test.find({}).populate('subject').populate('student');
+        const results = await Test.find({})
+            .populate('subject')
+            .populate('results.student'); // 💥 FIXED THIS LINE
+
         res.status(200).json({ message: 'Results retrieved successfully', results });
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving results', error });
     }
 };
 
-// View results of each subject
+// ✅ View results for a specific subject
 exports.viewSubjectResults = async (req, res) => {
     try {
         const { subjectId } = req.params;
-        const results = await Test.find({ subject: subjectId }).populate('student');
+        const results = await Test.find({ subject: subjectId })
+            .populate('subject')
+            .populate('results.student'); // 💥 FIXED THIS LINE
+
         res.status(200).json({ message: 'Subject results retrieved successfully', results });
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving subject results', error });
     }
 };
 
-// View overall statistics of results
+// ✅ View overall statistics
 exports.viewOverallStatistics = async (req, res) => {
     try {
         const totalTests = await Test.countDocuments();

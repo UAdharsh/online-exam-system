@@ -1,12 +1,14 @@
+// backend/Routes/teacherRoutes.js
+
 const express = require('express');
-const { 
-    createStudent, 
-    validateStudent, 
-    createSubject, 
-    createTest, 
-    viewStudentResults, 
-    viewSubjectResults, 
-    viewOverallStatistics 
+const {
+    createStudent,
+    validateStudent,
+    createSubject,
+    createTest,
+    viewStudentResults,
+    viewSubjectResults,
+    viewOverallStatistics
 } = require('../controllers/teacherController');
 const { isAuthenticated } = require('../middlewares/authMiddleware');
 
@@ -15,20 +17,20 @@ const router = express.Router();
 // Route for creating student accounts
 router.post('/students', isAuthenticated, createStudent);
 
-// Route for validating student accounts
-router.post('/students/validate', isAuthenticated, validateStudent);
+// ✅ FIXED route to accept studentId in params
+router.post('/students/validate/:studentId', isAuthenticated, validateStudent);
 
 // Route for creating subjects
 router.post('/subjects', isAuthenticated, createSubject);
 
-// Route for creating online tests
+// ✅ Include test duration and creator
 router.post('/tests', isAuthenticated, createTest);
 
-// Route for viewing results of each student
+// ✅ View all student results
 router.get('/results/students', isAuthenticated, viewStudentResults);
 
-// Route for viewing results of each subject
-router.get('/results/subjects', isAuthenticated, viewSubjectResults);
+// ✅ FIXED: Accept subjectId param
+router.get('/results/subjects/:subjectId', isAuthenticated, viewSubjectResults);
 
 // Route for viewing overall statistics
 router.get('/statistics', isAuthenticated, viewOverallStatistics);

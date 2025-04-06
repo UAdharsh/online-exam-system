@@ -15,42 +15,68 @@ const api = axios.create({
 // ✅ AUTH API CALLS
 // =======================
 export const signUp = async (userData) => {
-    return await axios.post(`${API_URL}/auth/signup`, userData);
+    return await api.post(`/auth/signup`, userData);
 };
 
 export const signIn = async (credentials) => {
-    return await axios.post(`${API_URL}/auth/signin`, credentials);
+    return await api.post(`/auth/signin`, credentials);     // ${API_URL}
 };
 
 // =======================
 // ✅ ADMIN API CALLS
 // =======================
-export const createTeacher = async (teacherData, token) => {
+// Create Teacher
+export const adminCreateTeacher = async (teacherData, token) => {
     return await axios.post(`${API_URL}/admin/create-teacher`, teacherData, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
-export const createStudent = async (studentData, token) => {
+// Create Student
+export const adminCreateStudent = async (studentData, token) => {
     return await axios.post(`${API_URL}/admin/create-student`, studentData, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
-export const createSubject = async (subjectData, token) => {
+// Validate Account
+export const adminValidateAccount = async (email, token) => {
+    return await axios.post(`${API_URL}/admin/validate-account`, { email }, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+// Create Subject
+export const adminCreateSubject = async (subjectData, token) => {
     return await axios.post(`${API_URL}/admin/create-subject`, subjectData, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
-export const createTest = async (testData, token) => {
+// Create Test
+export const adminCreateTest = async (testData, token) => {
     return await axios.post(`${API_URL}/admin/create-test`, testData, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
-export const getResults = async (token) => {
-    return await axios.get(`${API_URL}/admin/results`, {
+// View Results of a Student
+export const adminGetStudentResults = async (studentId, token) => {
+    return await axios.get(`${API_URL}/admin/student-results/${studentId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+// View Results of a Subject
+export const adminGetSubjectResults = async (subjectId, token) => {
+    return await axios.get(`${API_URL}/admin/subject-results/${subjectId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+// View Overall Statistics
+export const adminGetOverallStatistics = async (token) => {
+    return await axios.get(`${API_URL}/admin/overall-statistics`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
@@ -58,40 +84,64 @@ export const getResults = async (token) => {
 // =======================
 // ✅ TEACHER API CALLS
 // =======================
+
+// Create a student account
 export const teacherCreateStudent = async (studentData, token) => {
-    return await axios.post(`${API_URL}/teacher/create-student`, studentData, {
+    return await axios.post(`${API_URL}/teacher/students`, studentData, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
+// Validate a student account
+export const teacherValidateStudent = async (studentId, token) => {
+    return await axios.post(`${API_URL}/teacher/students/validate/${studentId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+// Create a test (with questions and duration)
 export const teacherCreateTest = async (testData, token) => {
-    return await axios.post(`${API_URL}/teacher/create-test`, testData, {
+    return await axios.post(`${API_URL}/teacher/tests`, testData, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
+// Create a subject
+export const teacherCreateSubject = async (subjectData, token) => {
+    return await axios.post(`${API_URL}/teacher/subjects`, subjectData, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+// View all student results
 export const getTeacherResults = async (token) => {
-    return await axios.get(`${API_URL}/teacher/results`, {
+    return await axios.get(`${API_URL}/teacher/results/students`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 };
 
+// View results by subject
+export const getSubjectResults = async (subjectId, token) => {
+    return await axios.get(`${API_URL}/teacher/results/subjects/${subjectId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
 
+// View overall statistics
+export const getTeacherStatistics = async (token) => {
+    return await axios.get(`${API_URL}/teacher/statistics`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
 
 // =======================
 // ✅ STUDENT API CALLS
 // =======================
-export const attendTest = async (testId, token) => {
-    return await axios.post(`${API_URL}/student/attend-test/${testId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-};
-
-export const getStudentResults = async (token) => {
-    return await axios.get(`${API_URL}/student/results`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-};
+export const attendTest = async (testId, token) => axios.post(`${API_URL}/student/attend-test/${testId}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+export const getStudentResults = async (studentId, token) => axios.get(`${API_URL}/student/results/${studentId}`, { headers: { Authorization: `Bearer ${token}` } });
+export const getStudentStatistics = async (studentId, token) => axios.get(`${API_URL}/student/statistics/${studentId}`, { headers: { Authorization: `Bearer ${token}` } });
+export const studentFetchTest = async (testId) => axios.get(`${API_URL}/student/test/${testId}`).then(res => res.data);
+export const studnetSubmitTest = async (testId, answers) => axios.post(`${API_URL}/student/submit/${testId}`, { answers }).then(res => res.data);
 
 // =======================
 // ✅ GENERAL STATS API
@@ -130,26 +180,6 @@ export const getAllTests = async () => {
     const response = await axios.get(`${API_URL}/admin/tests`);
     return response.data;
 };
-
-// =======================
-// ✅ TEACHER API CALLS
-// =======================
-
-export const getStudents = async () => {
-    const response = await axios.get(`${API_URL}/teacher/students`);
-    return response;
-};
-
-export const getTests = async () => {
-    const response = await axios.get(`${API_URL}/teacher/tests`);
-    return response;
-};
-
-export const createTest = async (testData) => {
-    const response = await axios.post(`${API_URL}/teacher/create-test`, testData);
-    return response;
-};
-
 
 // ✅ Default export for generic GET/POST/PUT/DELETE (used in Dashboard)
 export default api;

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Subject = require('./Subject');
 
 const TestSchema = new mongoose.Schema({
     subject: {
@@ -59,6 +60,16 @@ const TestSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    }
+});
+
+TestSchema.post('save', async function (doc) {
+    try {
+        await Subject.findByIdAndUpdate(doc.subject, {
+            $addToSet: { tests: doc._id } // avoids duplicate test IDs
+        });
+    } catch (error) {
+        console.error('Error adding test to subject:', error);
     }
 });
 
