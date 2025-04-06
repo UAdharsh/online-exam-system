@@ -1,0 +1,66 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.dashboard-header {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.dashboard-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.dashboard-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.dashboard-table tr:hover {
+    background-color: #ddd;
+}
+
+.dashboard-statistics {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.stat-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.stat-card h3 {
+    margin: 0;
+    color: #333;
+}
+
+.stat-card p {
+    font-size: 1.5rem;
+    color: #4CAF50;
+}
